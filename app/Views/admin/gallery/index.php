@@ -23,9 +23,17 @@
 <div class="tiles">
   <?php foreach ($images as $i => $g): ?>
   <article class="tile" id="g-<?= $g['id'] ?>">
-    <img src="<?= media_url($g['media_path'], 'sm') ?>" alt="<?= esc($g['media_alt'], 'attr') ?>" loading="lazy">
-    <form class="tile-body" action="<?= site_url("admin/gallery/{$g['id']}") ?>" method="post">
+    <form class="tile-form" action="<?= site_url("admin/gallery/{$g['id']}") ?>" method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
+      <div class="img-field tile-photo">
+        <div class="img-preview"><img src="<?= media_url($g['media_path'], 'sm') ?>" alt="<?= esc($g['media_alt'], 'attr') ?>" loading="lazy"></div>
+        <label class="file-btn tile-swap">
+          <input type="file" name="image" accept="image/jpeg,image/png,image/webp" data-image-input data-ratio="" aria-label="사진 바꾸기">
+          <span class="btn btn--line btn--sm">사진 바꾸기</span>
+        </label>
+        <p class="tile-msg" data-image-msg role="alert"></p>
+      </div>
+      <div class="tile-body">
       <label class="sr-only" for="cap-<?= $g['id'] ?>">설명 문구</label>
       <input type="text" id="cap-<?= $g['id'] ?>" name="caption" maxlength="100" value="<?= esc($g['caption'], 'attr') ?>" placeholder="설명 문구">
       <label class="sr-only" for="area-<?= $g['id'] ?>">분류</label>
@@ -35,6 +43,7 @@
         <label class="check"><input type="checkbox" name="is_visible" value="1"<?= $g['is_visible'] ? ' checked' : '' ?>> 표시</label>
       </div>
       <button class="btn btn--line btn--sm" type="submit">저장</button>
+      </div>
     </form>
     <div class="tile-foot">
       <div class="actions">

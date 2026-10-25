@@ -39,6 +39,8 @@
     img.src = url;
     img.alt = '';
     preview.appendChild(img);
+    // 아직 저장 전이라는 표시 (갤러리 타일에서 사용)
+    preview.closest('.img-field').classList.add('is-changed');
   }
 
   function replaceFile(input, file) {

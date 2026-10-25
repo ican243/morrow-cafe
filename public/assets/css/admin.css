@@ -142,6 +142,15 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); bord
 .tile { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
 .tile:target { outline: 3px solid var(--sand); }
 .tile > img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--sand); }
+.tile-form { display: flex; flex-direction: column; flex: 1; }
+.tile-photo { display: block; position: relative; }
+.tile-photo .img-preview { width: 100%; aspect-ratio: 4 / 3; border: 0; border-radius: 0; background: var(--sand); }
+.tile-swap { position: absolute; top: 10px; right: 10px; }
+.tile-swap .btn { box-shadow: 0 1px 4px rgba(53, 41, 31, .15); }
+.tile-photo.is-changed::after { content: "새 사진 · 저장을 눌러야 바뀝니다"; position: absolute; left: 0; right: 0; top: 0; padding: 7px 10px; background: var(--espresso); color: var(--cream); font-size: .75rem; }
+.tile-photo.is-changed .tile-swap { top: 38px; }
+.tile-msg { margin: 0; padding: 8px 14px 0; color: var(--err); font-size: .8125rem; }
+.tile-msg:empty { display: none; }
 .tile-body { padding: 14px; display: grid; gap: 10px; flex: 1; }
 .tile-body input, .tile-body select { min-height: 38px; padding: 6px 10px; font-size: .875rem; }
 .tile-foot { display: flex; justify-content: space-between; gap: 6px; padding: 10px 14px; border-top: 1px solid var(--line); background: #FCFAF7; }

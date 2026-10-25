@@ -51,18 +51,33 @@ class Gallery extends AdminController
 
     public function update(int $id)
     {
-        $this->findOr404($this->model, $id);
+        $old  = $this->findOr404($this->model, $id);
         $data = [
             'area'         => (string) $this->request->getPost('area'),
             'caption'      => trim((string) $this->request->getPost('caption')),
             'show_on_home' => $this->flag('show_on_home'),
             'is_visible'   => $this->flag('is_visible'),
         ];
-        if (! $this->model->update($id, $data)) {
+        if (! $this->model->validate($data)) {
             return $this->backWithErrors($this->model->errors());
         }
 
-        return redirect()->to(site_url('admin/gallery') . '#g-' . $id)->with('message', '저장했습니다.');
+        // 새 사진을 골랐으면 그 자리 사진만 바꾸고 순서·설명은 그대로 둔다
+        $mediaId = $this->uploadImage('image', $data['caption'] ?: '매장 사진');
+        if (is_string($mediaId)) {
+            return $this->backWithErrors($mediaId);
+        }
+        if ($mediaId) {
+            $data['media_id'] = $mediaId;
+        }
+
+        $this->model->update($id, $data);
+
+        if ($mediaId) {
+            model(MediaModel::class)->removeIfOrphan((int) $old['media_id']);
+        }
+
+        return redirect()->to(site_url('admin/gallery') . '#g-' . $id)->with('message', $mediaId ? '사진을 바꿨습니다.' : '저장했습니다.');
     }
 
     public function delete(int $id)
