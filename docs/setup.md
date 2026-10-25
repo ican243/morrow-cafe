@@ -63,7 +63,19 @@ sudo nginx -t && sudo systemctl reload nginx
 
 키가 없으면 지도 자리에 주소 카드가 나오고, 네이버·카카오 길찾기 버튼은 그대로 동작합니다.
 
-## 5. 보안 정리
+## 5. 백업
+
+`/var/www/backups/` 에 시각을 붙여 3개씩 저장 (권한 600, 서버 관리자만 읽기)
+
+| 파일 | 내용 |
+|---|---|
+| `cafe_code_날짜.tar.gz` | 코드 전체 + `.env` + 올린 사진 + `.git` (vendor·캐시·세션·로그 제외) |
+| `cafe_db_날짜.sql.gz` | DB 전체 |
+| `cafe_server_날짜.tar.gz` | nginx 설정, PHP-FPM 풀, ssh config |
+
+되돌리기: `zcat cafe_db_날짜.sql.gz | sudo mysql cafe_db` / `tar -xzf cafe_code_날짜.tar.gz -C /var/www`
+
+## 6. 보안 정리
 
 - 모든 POST 폼 CSRF 토큰 확인, 관리자 로그인 5분 5회 제한, 로그인 시 세션 ID 재발급
 - 비밀번호는 `password_hash` 로만 저장. 초기 비밀번호는 명령 실행 시 한 번만 출력
@@ -72,7 +84,7 @@ sudo nginx -t && sudo systemctl reload nginx
 - 사용 중인 사진·메뉴가 있는 카테고리는 삭제 불가 (DB 외래키 + 화면 안내 이중으로)
 - `/cafe/` 전체 `noindex` (가상 매장이 검색에 노출되지 않게)
 
-## 6. 실제 고객에게 납품할 때
+## 7. 실제 고객에게 납품할 때
 
 1. 새 DB·계정 만들고 `.env` 새로 작성 (`app.baseURL`, `cookie.path` 를 고객 도메인에 맞게)
 2. `migrate` → `InitialSeeder` 만 실행 (**DemoSeeder 실행 금지**)
