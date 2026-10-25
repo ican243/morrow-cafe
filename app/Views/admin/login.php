@@ -16,8 +16,8 @@
   <p>관리자 로그인</p>
   <?= $this->include('admin/_flash') ?>
   <div class="field">
-    <label for="email">이메일</label>
-    <input type="email" id="email" name="email" value="<?= esc(old('email'), 'attr') ?>" autocomplete="username" required autofocus>
+    <label for="email">아이디</label>
+    <input type="text" id="email" name="email" value="<?= esc(old('email'), 'attr') ?>" autocomplete="username" required autofocus>
   </div>
   <div class="field">
     <label for="password">비밀번호</label>

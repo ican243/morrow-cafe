@@ -21,7 +21,7 @@ class Auth extends BaseController
         $email    = trim((string) $this->request->getPost('email'));
         $password = (string) $this->request->getPost('password');
 
-        // 무차별 대입 방지: 같은 IP, 같은 이메일 각각 5분에 5번까지
+        // 무차별 대입 방지: 같은 IP, 같은 아이디 각각 5분에 5번까지
         $throttler = service('throttler');
         $ipKey     = 'cafe_login_ip_' . md5($this->request->getIPAddress());
         $emailKey  = 'cafe_login_email_' . md5(strtolower($email));
@@ -34,7 +34,7 @@ class Auth extends BaseController
         $admin = $model->where('email', $email)->first();
 
         if (! $admin || ! password_verify($password, $admin['password'])) {
-            return redirect()->back()->withInput()->with('error', '이메일 또는 비밀번호가 올바르지 않습니다.');
+            return redirect()->back()->withInput()->with('error', '아이디 또는 비밀번호가 올바르지 않습니다.');
         }
 
         // 해시 방식이 바뀌었으면 로그인하는 김에 새 방식으로 다시 저장
