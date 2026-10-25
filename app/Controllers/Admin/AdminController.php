@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Libraries\ImageService;
 use App\Models\MediaModel;
+use App\Models\SortableModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 /**
@@ -84,5 +85,20 @@ abstract class AdminController extends BaseController
         $value = trim((string) $value);
 
         return $value === '' ? null : date('Y-m-d H:i:s', strtotime($value));
+    }
+
+    /** 드래그 순서 저장 (화면이 새로고침 없이 보내고, 결과를 JSON 으로 돌려받음) */
+    protected function saveOrder(SortableModel $model)
+    {
+        $ids = (array) ($this->request->getJSON(true)['ids'] ?? []);
+
+        if (! $model->reorder($ids)) {
+            return $this->response->setStatusCode(422)->setJSON([
+                'ok'      => false,
+                'message' => '순서를 저장하지 못했습니다. 새로고침 후 다시 시도해 주세요.',
+            ]);
+        }
+
+        return $this->response->setJSON(['ok' => true, 'message' => '순서를 저장했습니다.']);
     }
 }

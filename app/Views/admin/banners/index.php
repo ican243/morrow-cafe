@@ -5,16 +5,17 @@
   <a class="btn" href="<?= site_url('admin/banners/new') ?>">+ 배너 추가</a>
 </div>
 <div class="card table-wrap">
-  <table class="list">
+  <table class="list list--banner">
     <thead><tr><th>순서</th><th>사진</th><th>문구</th><th>노출 기간</th><th>상태</th><th></th></tr></thead>
-    <tbody>
+    <tbody data-sortable="<?= site_url('admin/banners/sort') ?>">
     <?php foreach ($banners as $i => $b): ?>
-    <tr>
+    <tr data-id="<?= $b['id'] ?>">
       <td>
         <div class="actions">
+          <span class="drag-handle" title="끌어서 순서 바꾸기" aria-hidden="true"></span>
           <?php foreach (['up' => '▲', 'down' => '▼'] as $dir => $arrow): ?>
           <form class="inline" action="<?= site_url("admin/banners/{$b['id']}/move/{$dir}") ?>" method="post"><?= csrf_field() ?>
-            <button class="btn btn--line btn--sm btn--icon" type="submit" aria-label="<?= $dir === 'up' ? '위로' : '아래로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($banners) - 1) ? ' disabled' : '' ?>><?= $arrow ?></button>
+            <button class="btn btn--line btn--sm btn--icon" type="submit" data-move="<?= $dir ?>" aria-label="<?= $dir === 'up' ? '위로' : '아래로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($banners) - 1) ? ' disabled' : '' ?>><?= $arrow ?></button>
           </form>
           <?php endforeach ?>
         </div>

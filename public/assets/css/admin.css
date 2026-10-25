@@ -202,3 +202,18 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); bord
   .list--menu .btn--sm { min-height: 40px; padding: 0 12px; }
   .list--menu .btn--icon { width: 40px; padding: 0; }
 }
+
+/* ---------- 순서 드래그 ---------- */
+.drag-handle { display: inline-grid; place-items: center; width: 26px; height: 34px; cursor: grab; touch-action: none; border-radius: 6px; color: var(--taupe); }
+.drag-handle::before { content: ""; width: 10px; height: 16px; background: radial-gradient(circle, currentColor 1.6px, transparent 1.8px) 0 0 / 5px 5.33px; }
+.drag-handle:hover { background: var(--cream); color: var(--espresso); }
+.drag-handle:active { cursor: grabbing; }
+.is-chosen { background: var(--cream); }
+.is-ghost { opacity: .35; }
+tr.is-ghost td { background: var(--sand); }
+.is-saving { pointer-events: none; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 100; padding: 11px 18px; border-radius: 8px; background: var(--espresso); color: var(--cream); font-size: .875rem; box-shadow: 0 4px 16px rgba(53, 41, 31, .2); }
+.toast--err { background: var(--err); color: #fff; }
+.list td:first-child > .actions { flex-wrap: nowrap; gap: 4px; }
+.list .thumb { max-width: none; flex-shrink: 0; }
+.list--banner td:nth-child(3) { min-width: 200px; }

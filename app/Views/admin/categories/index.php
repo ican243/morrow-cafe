@@ -7,14 +7,15 @@
 <div class="card table-wrap">
   <table class="list">
     <thead><tr><th>순서</th><th>이름</th><th>영문</th><th class="num">메뉴 수</th><th>상태</th><th></th></tr></thead>
-    <tbody>
+    <tbody data-sortable="<?= site_url('admin/categories/sort') ?>">
     <?php foreach ($categories as $i => $c): $n = (int) ($counts[$c['id']] ?? 0); ?>
-      <tr class="<?= $c['is_visible'] ? '' : 'is-hidden-row' ?>">
+      <tr data-id="<?= $c['id'] ?>" class="<?= $c['is_visible'] ? '' : 'is-hidden-row' ?>">
         <td>
           <div class="actions">
+            <span class="drag-handle" title="끌어서 순서 바꾸기" aria-hidden="true"></span>
             <?php foreach (['up' => '▲', 'down' => '▼'] as $dir => $arrow): ?>
             <form class="inline" action="<?= site_url("admin/categories/{$c['id']}/move/{$dir}") ?>" method="post"><?= csrf_field() ?>
-              <button class="btn btn--line btn--sm btn--icon" type="submit" aria-label="<?= esc($c['name_ko']) ?> <?= $dir === 'up' ? '위로' : '아래로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($categories) - 1) ? ' disabled' : '' ?>><?= $arrow ?></button>
+              <button class="btn btn--line btn--sm btn--icon" type="submit" data-move="<?= $dir ?>" aria-label="<?= esc($c['name_ko']) ?> <?= $dir === 'up' ? '위로' : '아래로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($categories) - 1) ? ' disabled' : '' ?>><?= $arrow ?></button>
             </form>
             <?php endforeach ?>
           </div>

@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/admin') ?>
 <?= $this->section('content') ?>
 <div class="page-title">
-  <div><h1>메뉴 관리</h1><p>품절·가격·숨김은 목록에서 바로 바꿀 수 있습니다. ▲▼ 로 카테고리 안의 순서를 바꿉니다.</p></div>
+  <div><h1>메뉴 관리</h1><p>품절·가격·숨김은 목록에서 바로 바꿀 수 있습니다. ⋮⋮ 를 끌거나 ▲▼ 로 카테고리 안의 순서를 바꿉니다.</p></div>
   <a class="btn" href="<?= site_url('admin/menus/new' . ($filter['category'] ? '?category=' . $filter['category'] : '')) ?>">+ 메뉴 추가</a>
 </div>
 
@@ -35,14 +35,15 @@
   </div>
   <table class="list list--menu">
     <thead><tr><th>순서</th><th>사진</th><th>메뉴</th><th>가격(원)</th><th>판매</th><th>표시</th><th></th></tr></thead>
-    <tbody>
+    <tbody<?= $filter['q'] === '' && ! $filter['soldout'] ? ' data-sortable="' . site_url('admin/menus/sort') . '"' : '' ?>>
     <?php foreach ($items as $i => $m): ?>
-    <tr id="menu-<?= $m['id'] ?>" class="<?= $m['is_visible'] ? '' : 'is-hidden-row' ?>">
+    <tr id="menu-<?= $m['id'] ?>" data-id="<?= $m['id'] ?>" class="<?= $m['is_visible'] ? '' : 'is-hidden-row' ?>">
       <td>
         <div class="actions">
+          <?php if ($filter['q'] === '' && ! $filter['soldout']): ?><span class="drag-handle" title="끌어서 순서 바꾸기" aria-hidden="true"></span><?php endif ?>
           <?php foreach (['up' => '▲', 'down' => '▼'] as $dir => $arrow): ?>
           <form class="inline" action="<?= site_url("admin/menus/{$m['id']}/move/{$dir}") ?>" method="post"><?= csrf_field() ?>
-            <button class="btn btn--line btn--sm btn--icon" type="submit" aria-label="<?= esc($m['name_ko'], 'attr') ?> <?= $dir === 'up' ? '위로' : '아래로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($items) - 1) || $filter['q'] !== '' || $filter['soldout'] ? ' disabled' : '' ?>><?= $arrow ?></button>
+            <button class="btn btn--line btn--sm btn--icon" type="submit" data-move="<?= $dir ?>" aria-label="<?= esc($m['name_ko'], 'attr') ?> <?= $dir === 'up' ? '위로' : '아래로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($items) - 1) || $filter['q'] !== '' || $filter['soldout'] ? ' disabled' : '' ?>><?= $arrow ?></button>
           </form>
           <?php endforeach ?>
         </div>

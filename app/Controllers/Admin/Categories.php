@@ -69,6 +69,11 @@ class Categories extends AdminController
         return redirect()->to(site_url('admin/categories'))->with('message', "'{$row['name_ko']}' 카테고리를 삭제했습니다.");
     }
 
+    public function sort()
+    {
+        return $this->saveOrder($this->model);
+    }
+
     public function move(int $id, string $dir)
     {
         $this->model->move($id, $dir);

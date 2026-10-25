@@ -89,6 +89,11 @@ class Banners extends AdminController
         return redirect()->to(site_url('admin/banners'))->with('message', '배너를 삭제했습니다.');
     }
 
+    public function sort()
+    {
+        return $this->saveOrder($this->model);
+    }
+
     public function move(int $id, string $dir)
     {
         $this->model->move($id, $dir);

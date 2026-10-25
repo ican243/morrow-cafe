@@ -140,3 +140,81 @@
     dialog.addEventListener('cancel', function () { if (active) active.input.value = ''; closeCrop(); });
   }
 })();
+
+// 순서 바꾸기: ⋮⋮ 손잡이를 끌어서 놓으면 바로 저장, 실패하면 원래 순서로 되돌림
+(function () {
+  if (typeof window.Sortable === 'undefined') return;
+  var token = document.querySelector('meta[name="X-CSRF-TOKEN"]');
+
+  function toast(text, ok) {
+    var el = document.createElement('div');
+    el.className = 'toast' + (ok ? '' : ' toast--err');
+    el.setAttribute('role', ok ? 'status' : 'alert');
+    el.textContent = text;
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, ok ? 2000 : 4000);
+  }
+
+  document.querySelectorAll('[data-sortable]').forEach(function (list) {
+    var items = function () { return Array.prototype.filter.call(list.children, function (el) { return el.hasAttribute('data-id'); }); };
+    var ids = function () { return items().map(function (el) { return el.getAttribute('data-id'); }); };
+    var before = [];
+
+    // 끌어서 옮긴 뒤 맨 앞·맨 뒤 화살표 버튼 상태도 맞춰 줌
+    function syncArrows() {
+      var all = items();
+      all.forEach(function (el, i) {
+        var up = el.querySelector('[data-move="up"]');
+        var down = el.querySelector('[data-move="down"]');
+        if (up) up.disabled = i === 0;
+        if (down) down.disabled = i === all.length - 1;
+      });
+    }
+
+    function restore() {
+      before.forEach(function (id) {
+        var el = list.querySelector(':scope > [data-id="' + id + '"]');
+        if (el) list.appendChild(el);
+      });
+      syncArrows();
+    }
+
+    Sortable.create(list, {
+      handle: '.drag-handle',
+      draggable: '[data-id]',
+      animation: 150,
+      ghostClass: 'is-ghost',
+      chosenClass: 'is-chosen',
+      onStart: function () { before = ids(); },
+      onEnd: function () {
+        var now = ids();
+        if (now.join() === before.join()) return;
+        syncArrows();
+        list.classList.add('is-saving');
+
+        fetch(list.getAttribute('data-sortable'), {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': token ? token.getAttribute('content') : ''
+          },
+          body: JSON.stringify({ ids: now })
+        })
+          .then(function (res) {
+            return res.json().catch(function () { return {}; }).then(function (data) {
+              if (!res.ok || !data.ok) throw new Error(data.message || '');
+              return data;
+            });
+          })
+          .then(function (data) { toast(data.message, true); })
+          .catch(function (err) {
+            restore();
+            toast(err.message || '순서를 저장하지 못했습니다. 새로고침 후 다시 시도해 주세요.', false);
+          })
+          .then(function () { list.classList.remove('is-saving'); });
+      }
+    });
+  });
+})();

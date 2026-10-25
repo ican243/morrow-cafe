@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/admin') ?>
 <?= $this->section('content') ?>
-<div class="page-title"><div><h1>매장 사진 갤러리</h1><p>SPACE 페이지에 이 순서대로 보입니다. 'HOME에 표시'를 켠 사진 중 앞쪽 5장은 HOME 공간 소개에 나옵니다.</p></div></div>
+<div class="page-title"><div><h1>매장 사진 갤러리</h1><p>SPACE 페이지에 이 순서대로 보입니다. ⋮⋮ 를 끌어 순서를 바꿀 수 있습니다. 'HOME에 표시'를 켠 사진 중 앞쪽 5장은 HOME 공간 소개에 나옵니다.</p></div></div>
 
 <form class="card" action="<?= site_url('admin/gallery') ?>" method="post" enctype="multipart/form-data">
   <?= csrf_field() ?>
@@ -20,9 +20,9 @@
   <div class="form-foot"><span></span><button class="btn" type="submit">사진 추가</button></div>
 </form>
 
-<div class="tiles">
+<div class="tiles" data-sortable="<?= site_url('admin/gallery/sort') ?>">
   <?php foreach ($images as $i => $g): ?>
-  <article class="tile" id="g-<?= $g['id'] ?>">
+  <article class="tile" id="g-<?= $g['id'] ?>" data-id="<?= $g['id'] ?>">
     <form class="tile-form" action="<?= site_url("admin/gallery/{$g['id']}") ?>" method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
       <div class="img-field tile-photo">
@@ -47,9 +47,10 @@
     </form>
     <div class="tile-foot">
       <div class="actions">
+        <span class="drag-handle" title="끌어서 순서 바꾸기" aria-hidden="true"></span>
         <?php foreach (['up' => '◀', 'down' => '▶'] as $dir => $arrow): ?>
         <form class="inline" action="<?= site_url("admin/gallery/{$g['id']}/move/{$dir}") ?>" method="post"><?= csrf_field() ?>
-          <button class="btn btn--line btn--sm btn--icon" type="submit" aria-label="<?= $dir === 'up' ? '앞으로' : '뒤로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($images) - 1) ? ' disabled' : '' ?>><?= $arrow ?></button>
+          <button class="btn btn--line btn--sm btn--icon" type="submit" data-move="<?= $dir ?>" aria-label="<?= $dir === 'up' ? '앞으로' : '뒤로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($images) - 1) ? ' disabled' : '' ?>><?= $arrow ?></button>
         </form>
         <?php endforeach ?>
       </div>

@@ -151,6 +151,11 @@ class Menus extends AdminController
         return redirect()->back()->with('message', "'{$row['name_ko']}' 메뉴를 삭제했습니다.");
     }
 
+    public function sort()
+    {
+        return $this->saveOrder($this->model);
+    }
+
     public function move(int $id, string $dir)
     {
         $this->model->move($id, $dir);

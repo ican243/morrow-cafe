@@ -25,6 +25,7 @@ $menu = [
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<?= csrf_meta() ?>
 <title><?= esc($title) ?> | MORROW 관리자</title>
 <link rel="icon" href="<?= base_url('assets/img/favicon.svg') ?>" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -78,6 +79,7 @@ $menu = [
 </dialog>
 
 <script src="<?= base_url('assets/vendor/cropper.min.js') ?>" defer></script>
+<script src="<?= base_url('assets/vendor/sortable.min.js') ?>" defer></script>
 <script src="<?= base_url('assets/js/admin.js?v=' . filemtime(FCPATH . 'assets/js/admin.js')) ?>" defer></script>
 </body>
 </html>
