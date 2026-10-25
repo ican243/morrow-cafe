@@ -225,7 +225,7 @@ button { font: inherit; color: inherit; }
 .menu-tabs a.is-active, .menu-tabs a:hover { color: var(--espresso); border-color: var(--espresso); }
 .menu-tabs li:first-child a { padding-left: 0; }
 
-.menu-cat { padding: clamp(48px, 7vw, 88px) 0 0; }
+.menu-cat { padding: clamp(48px, 7vw, 88px) 0 0; scroll-margin-top: calc(var(--tabs-h, 58px) - clamp(24px, 4vw, 40px)); }
 .menu-cat-head { display: flex; align-items: baseline; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--espresso); }
 .menu-cat-head h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(2rem, 4vw, 2.75rem); line-height: 1; }
 .menu-cat-head span { color: var(--brown); font-size: .9375rem; }

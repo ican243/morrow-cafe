@@ -42,17 +42,37 @@
   // MENU: 지금 보고 있는 카테고리 탭 표시
   var tabs = document.querySelectorAll('.menu-tabs a');
   if (tabs.length && 'IntersectionObserver' in window) {
+    var tabBar = document.querySelector('.menu-tabs');
+    var tabList = tabBar.querySelector('ul');
     var byId = {};
+    var clicking = null;
     tabs.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+
+    // 탭 줄 높이를 CSS 에 알려줘서, 탭을 눌렀을 때 제목이 탭 밑에 가려지지 않게 함
+    var setTabsH = function () { document.documentElement.style.setProperty('--tabs-h', tabBar.offsetHeight + 'px'); };
+    setTabsH();
+    window.addEventListener('resize', setTabsH);
+
+    var activate = function (tab) {
+      tabs.forEach(function (a) { a.classList.toggle('is-active', a === tab); });
+      // scrollIntoView 는 페이지 전체까지 움직여서 스크롤이 덜컥거림 → 탭 줄만 가로로 이동
+      var left = tab.offsetLeft - (tabList.clientWidth - tab.offsetWidth) / 2;
+      tabList.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+    };
+
+    // 탭을 누르면 도착할 때까지 지나가는 카테고리로 탭이 바뀌지 않게 잠시 고정
+    tabs.forEach(function (a) {
+      a.addEventListener('click', function () {
+        activate(a);
+        clearTimeout(clicking);
+        clicking = setTimeout(function () { clicking = null; }, 1000);
+      });
+    });
+
     var io = new IntersectionObserver(function (entries) {
+      if (clicking) return;
       entries.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        tabs.forEach(function (a) { a.classList.remove('is-active'); });
-        var tab = byId[en.target.id];
-        if (tab) {
-          tab.classList.add('is-active');
-          tab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        }
+        if (en.isIntersecting && byId[en.target.id]) activate(byId[en.target.id]);
       });
     }, { rootMargin: '-35% 0px -60% 0px' });
     document.querySelectorAll('.menu-cat').forEach(function (sec) { io.observe(sec); });
