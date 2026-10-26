@@ -72,10 +72,10 @@ class Cafe extends BaseConfig
             'menu_notice'    => ['label' => '메뉴 페이지 하단 안내 (원산지 등)', 'type' => 'textarea'],
         ],
         'sns' => [
-            'instagram_url'  => ['label' => '인스타그램 주소', 'type' => 'url'],
-            'kakao_channel_url' => ['label' => '카카오톡 채널 주소', 'type' => 'url'],
-            'naver_place_url'   => ['label' => '네이버 지도(플레이스) 주소', 'type' => 'url'],
-            'kakao_place_url'   => ['label' => '카카오맵 장소 주소', 'type' => 'url'],
+            'instagram_url'  => ['label' => '인스타그램 주소', 'type' => 'url', 'placeholder' => 'instagram.com/계정이름 또는 @계정이름'],
+            'kakao_channel_url' => ['label' => '카카오톡 채널 주소', 'type' => 'url', 'placeholder' => 'pf.kakao.com/_xxxxx'],
+            'naver_place_url'   => ['label' => '네이버 지도(플레이스) 주소', 'type' => 'url', 'placeholder' => 'naver.me/xxxxx (네이버 지도 공유하기 주소)'],
+            'kakao_place_url'   => ['label' => '카카오맵 장소 주소', 'type' => 'url', 'placeholder' => 'place.map.kakao.com/12345 (카카오맵 공유하기 주소)'],
         ],
     ];
 

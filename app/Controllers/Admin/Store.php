@@ -115,6 +115,27 @@ class Store extends AdminController
         ]);
     }
 
+    /**
+     * 주소 앞의 https:// 를 빼먹어도 저장되게 붙여 준다.
+     *  instagram.com/morrow → https://instagram.com/morrow
+     *  @morrow (인스타그램 칸)  → https://www.instagram.com/morrow
+     * javascript: 같은 다른 형식은 손대지 않음 → 아래 검사에서 막힘
+     */
+    private function withScheme(string $v, string $key): string
+    {
+        if ($v === '' || preg_match('#^https?://#i', $v)) {
+            return $v;
+        }
+        if ($key === 'instagram_url' && preg_match('/^@([A-Za-z0-9._]{1,30})$/', $v, $m)) {
+            return 'https://www.instagram.com/' . $m[1];
+        }
+        if (preg_match('#^[a-z0-9-]+(\.[a-z0-9-]+)+([/?\#]\S*)?$#i', $v)) {
+            return 'https://' . $v;
+        }
+
+        return $v;
+    }
+
     private function saveSettings(array $groups, string $back)
     {
         $fields      = array_intersect_key(config('Cafe')->settingFields, array_flip($groups));
@@ -124,12 +145,15 @@ class Store extends AdminController
         foreach ($fields as $group) {
             foreach ($group as $key => $f) {
                 $v = trim((string) $this->request->getPost($key));
+                if ($f['type'] === 'url') {
+                    $v = $this->withScheme($v, $key);
+                }
 
                 if (! empty($f['required']) && $v === '') {
                     $errors[] = "{$f['label']}: 꼭 입력해 주세요.";
                 }
                 if ($v !== '' && $f['type'] === 'url' && ! preg_match('#^https?://#i', $v)) {
-                    $errors[] = "{$f['label']}: http:// 또는 https:// 로 시작하는 주소를 넣어 주세요.";
+                    $errors[] = "{$f['label']}: 인터넷 주소 형식이 아닙니다." . (! empty($f['placeholder']) ? " (예: {$f['placeholder']})" : '');
                 }
                 if ($v !== '' && $f['type'] === 'number' && ! is_numeric($v)) {
                     $errors[] = "{$f['label']}: 숫자로 입력해 주세요.";

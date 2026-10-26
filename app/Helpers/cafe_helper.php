@@ -151,14 +151,14 @@ if (! function_exists('map_links')) {
 
         $naver = safe_url($s['naver_place_url'] ?? '')
             ?: 'https://map.naver.com/p/search/' . rawurlencode($address ?: $name);
-        $kakao = $hasPos
-            ? 'https://map.kakao.com/link/to/' . rawurlencode($name) . ',' . $lat . ',' . $lng
-            : 'https://map.kakao.com/link/search/' . rawurlencode($address ?: $name);
+        $kakao = safe_url($s['kakao_place_url'] ?? '')
+            ?: ($hasPos
+                ? 'https://map.kakao.com/link/to/' . rawurlencode($name) . ',' . $lat . ',' . $lng
+                : 'https://map.kakao.com/link/search/' . rawurlencode($address ?: $name));
 
         return [
-            'naver'      => $naver,
-            'kakao'      => $kakao,
-            'kakaoPlace' => safe_url($s['kakao_place_url'] ?? ''),
+            'naver' => $naver,
+            'kakao' => $kakao,
         ];
     }
 }
