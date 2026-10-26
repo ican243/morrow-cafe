@@ -160,23 +160,11 @@
     var ids = function () { return items().map(function (el) { return el.getAttribute('data-id'); }); };
     var before = [];
 
-    // 끌어서 옮긴 뒤 맨 앞·맨 뒤 화살표 버튼 상태도 맞춰 줌
-    function syncArrows() {
-      var all = items();
-      all.forEach(function (el, i) {
-        var up = el.querySelector('[data-move="up"]');
-        var down = el.querySelector('[data-move="down"]');
-        if (up) up.disabled = i === 0;
-        if (down) down.disabled = i === all.length - 1;
-      });
-    }
-
     function restore() {
       before.forEach(function (id) {
         var el = list.querySelector(':scope > [data-id="' + id + '"]');
         if (el) list.appendChild(el);
       });
-      syncArrows();
     }
 
     Sortable.create(list, {
@@ -189,7 +177,6 @@
       onEnd: function () {
         var now = ids();
         if (now.join() === before.join()) return;
-        syncArrows();
         list.classList.add('is-saving');
 
         fetch(list.getAttribute('data-sortable'), {

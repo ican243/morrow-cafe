@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/admin') ?>
 <?= $this->section('content') ?>
 <div class="page-title">
-  <div><h1>메뉴 카테고리</h1><p>MENU 페이지 상단 탭 순서대로 보입니다.</p></div>
+  <div><h1>메뉴 카테고리</h1><p>MENU 페이지 상단 탭 순서대로 보입니다. ⋮⋮ 를 끌어 순서를 바꿉니다.</p></div>
   <a class="btn" href="<?= site_url('admin/categories/new') ?>">+ 카테고리 추가</a>
 </div>
 <div class="card table-wrap">
@@ -13,11 +13,6 @@
         <td>
           <div class="actions">
             <span class="drag-handle" title="끌어서 순서 바꾸기" aria-hidden="true"></span>
-            <?php foreach (['up' => '▲', 'down' => '▼'] as $dir => $arrow): ?>
-            <form class="inline" action="<?= site_url("admin/categories/{$c['id']}/move/{$dir}") ?>" method="post"><?= csrf_field() ?>
-              <button class="btn btn--line btn--sm btn--icon" type="submit" data-move="<?= $dir ?>" aria-label="<?= esc($c['name_ko']) ?> <?= $dir === 'up' ? '위로' : '아래로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($categories) - 1) ? ' disabled' : '' ?>><?= $arrow ?></button>
-            </form>
-            <?php endforeach ?>
           </div>
         </td>
         <td><strong><?= esc($c['name_ko']) ?></strong></td>

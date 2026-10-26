@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/admin') ?>
 <?= $this->section('content') ?>
 <div class="page-title">
-  <div><h1>메인 배너</h1><p>HOME 첫 화면의 큰 사진과 문구입니다. 여러 개면 위에서부터 순서대로 넘겨볼 수 있습니다.</p></div>
+  <div><h1>메인 배너</h1><p>HOME 첫 화면의 큰 사진과 문구입니다. 여러 개면 위에서부터 순서대로 넘겨볼 수 있습니다. ⋮⋮ 를 끌어 순서를 바꿉니다.</p></div>
   <a class="btn" href="<?= site_url('admin/banners/new') ?>">+ 배너 추가</a>
 </div>
 <div class="card table-wrap">
@@ -13,11 +13,6 @@
       <td>
         <div class="actions">
           <span class="drag-handle" title="끌어서 순서 바꾸기" aria-hidden="true"></span>
-          <?php foreach (['up' => '▲', 'down' => '▼'] as $dir => $arrow): ?>
-          <form class="inline" action="<?= site_url("admin/banners/{$b['id']}/move/{$dir}") ?>" method="post"><?= csrf_field() ?>
-            <button class="btn btn--line btn--sm btn--icon" type="submit" data-move="<?= $dir ?>" aria-label="<?= $dir === 'up' ? '위로' : '아래로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($banners) - 1) ? ' disabled' : '' ?>><?= $arrow ?></button>
-          </form>
-          <?php endforeach ?>
         </div>
       </td>
       <td><img class="thumb thumb--wide" src="<?= media_url($b['media_path'], 'sm') ?>" alt=""></td>

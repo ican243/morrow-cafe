@@ -54,7 +54,6 @@ h1, h2, h3 { margin: 0; line-height: 1.35; }
 .btn--danger { background: #fff; color: var(--err); border-color: #E7C4BD; }
 .btn--danger:hover { background: var(--err-bg); border-color: var(--err); }
 .btn--sm { min-height: 34px; padding: 0 10px; font-size: .8125rem; font-weight: 500; border-radius: 6px; }
-.btn--icon { width: 34px; padding: 0; }
 .btn[disabled] { opacity: .35; cursor: default; }
 .inline { display: inline; margin: 0; }
 .actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
@@ -63,6 +62,7 @@ h1, h2, h3 { margin: 0; line-height: 1.35; }
 .flash { padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: .9375rem; }
 .flash--ok { background: var(--ok-bg); color: var(--ok); }
 .flash--err { background: var(--err-bg); color: var(--err); }
+.flash--info { background: var(--cream); color: var(--muted); border: 1px solid var(--line); }
 .flash ul { margin: 0; padding-left: 18px; }
 
 /* 표 */
@@ -196,11 +196,10 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); bord
   .list--menu td:nth-child(4) { order: 3; flex-basis: 100%; }
   .list--menu td:nth-child(5) { order: 4; }
   .list--menu td:nth-child(6) { order: 5; }
-  .list--menu td:nth-child(1) { order: 6; }
+  .list--menu td:nth-child(1) { order: 0; margin-left: -6px; }
   .list--menu td:nth-child(7) { order: 7; margin-left: auto; }
   .list--menu .price-form input[type=text] { width: 120px; }
   .list--menu .btn--sm { min-height: 40px; padding: 0 12px; }
-  .list--menu .btn--icon { width: 40px; padding: 0; }
 }
 
 /* ---------- 순서 드래그 ---------- */

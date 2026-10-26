@@ -48,11 +48,6 @@
     <div class="tile-foot">
       <div class="actions">
         <span class="drag-handle" title="끌어서 순서 바꾸기" aria-hidden="true"></span>
-        <?php foreach (['up' => '◀', 'down' => '▶'] as $dir => $arrow): ?>
-        <form class="inline" action="<?= site_url("admin/gallery/{$g['id']}/move/{$dir}") ?>" method="post"><?= csrf_field() ?>
-          <button class="btn btn--line btn--sm btn--icon" type="submit" data-move="<?= $dir ?>" aria-label="<?= $dir === 'up' ? '앞으로' : '뒤로' ?>"<?= ($dir === 'up' && $i === 0) || ($dir === 'down' && $i === count($images) - 1) ? ' disabled' : '' ?>><?= $arrow ?></button>
-        </form>
-        <?php endforeach ?>
       </div>
       <form class="inline" action="<?= site_url("admin/gallery/{$g['id']}/delete") ?>" method="post" data-confirm="이 사진을 갤러리에서 삭제할까요?">
         <?= csrf_field() ?><button class="btn btn--danger btn--sm" type="submit">삭제</button>

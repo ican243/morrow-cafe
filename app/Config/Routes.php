@@ -33,7 +33,6 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
             $routes->post("{$path}/(:num)/delete", "{$controller}::delete/$1");
             if ($path !== 'posts') {
                 $routes->post("{$path}/sort", "{$controller}::sort");
-                $routes->post("{$path}/(:num)/move/(up|down)", "{$controller}::move/$1/$2");
             }
         }
         $routes->post('menus/(:num)/quick', 'Menus::quick/$1');
@@ -47,7 +46,6 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
         $routes->post('gallery/(:num)', 'Gallery::update/$1');
         $routes->post('gallery/(:num)/delete', 'Gallery::delete/$1');
         $routes->post('gallery/sort', 'Gallery::sort');
-        $routes->post('gallery/(:num)/move/(up|down)', 'Gallery::move/$1/$2');
 
         $routes->get('store', 'Store::info');
         $routes->post('store', 'Store::saveInfo');

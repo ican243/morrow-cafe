@@ -156,12 +156,6 @@ class Menus extends AdminController
         return $this->saveOrder($this->model);
     }
 
-    public function move(int $id, string $dir)
-    {
-        $this->model->move($id, $dir);
-
-        return redirect()->to(previous_url() . '#menu-' . $id);
-    }
 
     private function form(?array $row)
     {
