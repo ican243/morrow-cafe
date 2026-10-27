@@ -71,11 +71,28 @@ class Cafe extends BaseConfig
             'facilities'     => ['label' => '기타 시설 (콘센트, 화장실 등)', 'type' => 'textarea'],
             'menu_notice'    => ['label' => '메뉴 페이지 하단 안내 (원산지 등)', 'type' => 'textarea'],
         ],
+        // help: 주소 찾는 법 / hosts: 이 칸에 넣을 수 있는 사이트 (다른 칸 주소를 잘못 넣는 것 방지)
         'sns' => [
-            'instagram_url'  => ['label' => '인스타그램 주소', 'type' => 'url', 'placeholder' => 'instagram.com/계정이름 또는 @계정이름'],
-            'kakao_channel_url' => ['label' => '카카오톡 채널 주소', 'type' => 'url', 'placeholder' => 'pf.kakao.com/_xxxxx'],
-            'naver_place_url'   => ['label' => '네이버 지도(플레이스) 주소', 'type' => 'url', 'placeholder' => 'naver.me/xxxxx (네이버 지도 공유하기 주소)'],
-            'kakao_place_url'   => ['label' => '카카오맵 장소 주소', 'type' => 'url', 'placeholder' => 'place.map.kakao.com/12345 (카카오맵 공유하기 주소)'],
+            'instagram_url' => [
+                'label' => '인스타그램', 'type' => 'url', 'hosts' => ['instagram.com'],
+                'placeholder' => '예: morrow.coffee',
+                'help' => '계정 이름만 적어도 됩니다. 인스타 앱 → 내 프로필 맨 위에 보이는 이름이 계정 이름입니다.',
+            ],
+            'kakao_channel_url' => [
+                'label' => '카카오톡 채널', 'type' => 'url', 'hosts' => ['pf.kakao.com', 'open.kakao.com'],
+                'placeholder' => '채널 URL을 복사해서 붙여넣기',
+                'help' => '카카오톡 채널 관리자센터(center-pf.kakao.com)에 로그인 → 내 채널 선택 → 왼쪽 메뉴 \'채널 홍보\' → 채널 URL \'복사\' 후 여기에 붙여넣기.',
+            ],
+            'naver_place_url' => [
+                'label' => '네이버 지도', 'type' => 'url', 'hosts' => ['naver.me', 'map.naver.com', 'place.naver.com'], 'optional' => true,
+                'placeholder' => '공유 → 링크 복사한 내용을 그대로 붙여넣기',
+                'help' => '네이버 지도 앱에서 매장 검색 → 매장 화면의 \'공유\' → \'링크 복사\' → 그대로 붙여넣기. 안내 글이 같이 복사돼도 주소만 골라 저장합니다.',
+            ],
+            'kakao_place_url' => [
+                'label' => '카카오맵', 'type' => 'url', 'hosts' => ['map.kakao.com', 'kko.kakao.com', 'kko.to'], 'optional' => true,
+                'placeholder' => '공유 → 링크 복사한 내용을 그대로 붙여넣기',
+                'help' => '카카오맵 앱에서 매장 검색 → 매장 화면의 \'공유\' → \'링크 복사\' → 그대로 붙여넣기. 안내 글이 같이 복사돼도 주소만 골라 저장합니다.',
+            ],
         ],
     ];
 

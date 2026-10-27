@@ -116,24 +116,44 @@ class Store extends AdminController
     }
 
     /**
-     * 주소 앞의 https:// 를 빼먹어도 저장되게 붙여 준다.
-     *  instagram.com/morrow → https://instagram.com/morrow
-     *  @morrow (인스타그램 칸)  → https://www.instagram.com/morrow
+     * 대표님이 붙여 넣은 그대로를 저장할 주소로 정리한다.
+     *  "[네이버 지도] 모로우커피 … https://naver.me/abc" → https://naver.me/abc  (공유 글에서 주소만)
+     *  instagram.com/morrow → https://instagram.com/morrow                     (https:// 자동)
+     *  morrow.coffee, @morrow.coffee (인스타그램 칸) → https://www.instagram.com/morrow.coffee
      * javascript: 같은 다른 형식은 손대지 않음 → 아래 검사에서 막힘
      */
-    private function withScheme(string $v, string $key): string
+    private function cleanLink(string $v, string $key): string
     {
-        if ($v === '' || preg_match('#^https?://#i', $v)) {
+        if ($v === '') {
             return $v;
         }
-        if ($key === 'instagram_url' && preg_match('/^@([A-Za-z0-9._]{1,30})$/', $v, $m)) {
+        if (preg_match('#https?://[^\s<>"\'()\[\]]+#i', $v, $m)) {
+            $v = rtrim($m[0], '.,!?');
+        } elseif ($key === 'instagram_url' && preg_match('/^@?([A-Za-z0-9._]{1,30})$/', $v, $m) && stripos($v, 'instagram.com') === false) {
             return 'https://www.instagram.com/' . $m[1];
+        } elseif (preg_match('#(?<![\w.@-])(?:[a-z0-9-]+\.)+[a-z]{2,}(?:[/?\#][^\s<>"\']*)?#i', $v, $m)) {
+            $v = 'https://' . rtrim($m[0], '.,!?');
         }
-        if (preg_match('#^[a-z0-9-]+(\.[a-z0-9-]+)+([/?\#]\S*)?$#i', $v)) {
-            return 'https://' . $v;
+
+        // 인스타 공유 링크 끝의 ?igsh=… 같은 추적 꼬리는 뗀다
+        if ($key === 'instagram_url' && preg_match('#^https?://#i', $v)) {
+            $v = preg_replace('#[?\#].*$#', '', $v);
         }
 
         return $v;
+    }
+
+    /** 주소가 이 칸에 맞는 사이트인지 (예: 인스타 칸에 카카오 주소를 넣은 경우 막기) */
+    private function hostAllowed(string $url, array $hosts): bool
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        foreach ($hosts as $h) {
+            if ($host === $h || str_ends_with($host, '.' . $h)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function saveSettings(array $groups, string $back)
@@ -146,14 +166,18 @@ class Store extends AdminController
             foreach ($group as $key => $f) {
                 $v = trim((string) $this->request->getPost($key));
                 if ($f['type'] === 'url') {
-                    $v = $this->withScheme($v, $key);
+                    $v = $this->cleanLink($v, $key);
                 }
 
                 if (! empty($f['required']) && $v === '') {
                     $errors[] = "{$f['label']}: 꼭 입력해 주세요.";
                 }
-                if ($v !== '' && $f['type'] === 'url' && ! preg_match('#^https?://#i', $v)) {
-                    $errors[] = "{$f['label']}: 인터넷 주소 형식이 아닙니다." . (! empty($f['placeholder']) ? " (예: {$f['placeholder']})" : '');
+                if ($v !== '' && $f['type'] === 'url') {
+                    if (! preg_match('#^https?://#i', $v)) {
+                        $errors[] = "{$f['label']}: 주소를 찾지 못했습니다. 아래 안내대로 복사한 링크를 붙여 넣어 주세요.";
+                    } elseif (! empty($f['hosts']) && ! $this->hostAllowed($v, $f['hosts'])) {
+                        $errors[] = "{$f['label']}: {$f['label']} 주소가 아닙니다. 다른 칸의 주소를 넣지 않았는지 확인해 주세요.";
+                    }
                 }
                 if ($v !== '' && $f['type'] === 'number' && ! is_numeric($v)) {
                     $errors[] = "{$f['label']}: 숫자로 입력해 주세요.";
