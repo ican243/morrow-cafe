@@ -42,7 +42,7 @@
             </h3>
             <span class="price"><?php if ($m['is_sold_out']): ?><span class="sr-only">품절, 가격 </span><?php endif ?><?= won($m['price']) ?></span>
           </div>
-          <p class="en"><?= esc($m['name_en']) ?></p>
+          <?php if ($m['name_en'] !== ''): ?><p class="en"><?= esc($m['name_en']) ?></p><?php endif ?>
           <?php if ($m['description']): ?><p class="desc"><?= esc($m['description']) ?></p><?php endif ?>
           <?php if ($m['temperature'] !== 'none'): ?><p class="menu-meta"><span><?= $temps[$m['temperature']] ?></span></p><?php endif ?>
           <?php if ($names || $m['ingredients']): ?>

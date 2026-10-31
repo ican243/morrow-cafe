@@ -13,7 +13,7 @@ $published = old('published_at', ! empty($row['published_at']) ? date('Y-m-d\TH:
   <div class="form-grid">
     <div class="field">
       <label for="type">분류<span class="req">*</span></label>
-      <select id="type" name="type">
+      <select id="type" name="type" data-post-type>
         <?php foreach ($types as $k => $label): ?><option value="<?= $k ?>"<?= $v('type', 'notice') === $k ? ' selected' : '' ?>><?= $label ?></option><?php endforeach ?>
       </select>
     </div>
@@ -27,22 +27,24 @@ $published = old('published_at', ! empty($row['published_at']) ? date('Y-m-d\TH:
       <input type="text" id="title" name="title" maxlength="150" required value="<?= esc($v('title'), 'attr') ?>">
     </div>
     <div class="field full">
-      <label for="summary">요약</label>
-      <input type="text" id="summary" name="summary" maxlength="300" value="<?= esc($v('summary'), 'attr') ?>" placeholder="목록에 두 줄까지 보입니다">
+      <label for="summary">짧은 소개 <span class="hint hint--inline">(선택)</span></label>
+      <input type="text" id="summary" name="summary" maxlength="300" value="<?= esc($v('summary'), 'attr') ?>" placeholder="예: 11월 한 달 동안만 만나는 계절 음료입니다.">
+      <span class="hint">홈페이지 NEWS 목록에서 제목 아래 한두 줄로 보입니다. 비워두면 목록에는 제목만 나옵니다.</span>
     </div>
     <div class="field full">
       <label for="body">내용<span class="req">*</span></label>
       <textarea class="tall" id="body" name="body" required><?= esc($v('body')) ?></textarea>
       <span class="hint">빈 줄을 한 번 넣으면 문단이 나뉩니다.</span>
     </div>
-    <div class="field">
+    <?php $isEvent = $v('type', 'notice') === 'event'; ?>
+    <div class="field" data-event-only<?= $isEvent ? '' : ' hidden' ?>>
       <label for="event_start">이벤트 시작일</label>
       <input type="date" id="event_start" name="event_start" value="<?= esc($v('event_start'), 'attr') ?>">
     </div>
-    <div class="field">
+    <div class="field" data-event-only<?= $isEvent ? '' : ' hidden' ?>>
       <label for="event_end">이벤트 종료일</label>
       <input type="date" id="event_end" name="event_end" value="<?= esc($v('event_end'), 'attr') ?>">
-      <span class="hint">분류가 '이벤트'일 때만 화면에 표시됩니다.</span>
+      <span class="hint">글 맨 위에 '이벤트 기간'으로 표시됩니다. 비워도 됩니다.</span>
     </div>
     <?= $this->setData(['ratio' => $ratio, 'removable' => true, 'label' => '대표 사진'])->include('admin/_image_field') ?>
     <div class="field full">

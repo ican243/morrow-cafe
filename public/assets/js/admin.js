@@ -335,3 +335,12 @@
     if (!custom.hidden) custom.querySelector('input').focus();
   });
 })();
+
+// 공지·이벤트 글: 분류가 '이벤트'일 때만 기간 칸 보이기
+(function () {
+  var type = document.querySelector('[data-post-type]');
+  if (!type) return;
+  type.addEventListener('change', function () {
+    document.querySelectorAll('[data-event-only]').forEach(function (el) { el.hidden = type.value !== 'event'; });
+  });
+})();

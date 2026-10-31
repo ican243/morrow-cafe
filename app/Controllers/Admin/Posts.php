@@ -135,8 +135,9 @@ class Posts extends AdminController
             'is_published' => $this->flag('is_published'),
             'is_pinned'    => $this->flag('is_pinned'),
             'published_at' => $p('published_at'),
-            'event_start'  => $p('event_start') ?: null,
-            'event_end'    => $p('event_end') ?: null,
+            // 공지에는 이벤트 기간을 쓰지 않으므로 남아 있던 값도 비운다
+            'event_start'  => $p('type') === 'event' ? ($p('event_start') ?: null) : null,
+            'event_end'    => $p('type') === 'event' ? ($p('event_end') ?: null) : null,
         ];
     }
 }

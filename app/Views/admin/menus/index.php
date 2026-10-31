@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/admin') ?>
 <?= $this->section('content') ?>
 <div class="page-title">
-  <div><h1>메뉴 관리</h1><p>품절·가격·숨김은 목록에서 바로 바꿀 수 있습니다. ⋮⋮ 를 끌어 카테고리 안의 순서를 바꿉니다.</p></div>
+  <div><h1>메뉴 관리</h1><p>판매·표시 스위치는 누르면 바로 바뀝니다. 가격은 고친 뒤 '변경'을 누르세요. ⋮⋮ 를 끌어 카테고리 안의 순서를 바꿉니다.</p></div>
   <a class="btn" href="<?= site_url('admin/menus/new' . ($filter['category'] ? '?category=' . $filter['category'] : '')) ?>">+ 메뉴 추가</a>
 </div>
 
@@ -38,7 +38,7 @@
     <a class="btn btn--line btn--sm" href="<?= site_url('admin/menus/new?category=' . $c['id']) ?>">+ 이 카테고리에 추가</a>
   </div>
   <table class="list list--menu">
-    <thead><tr><th>순서</th><th>사진</th><th>메뉴</th><th>가격(원)</th><th>판매</th><th>표시</th><th></th></tr></thead>
+    <thead><tr><th>순서</th><th>사진</th><th>메뉴</th><th>가격(원)</th><th>판매</th><th>홈페이지</th><th></th></tr></thead>
     <tbody<?= $filter['q'] === '' && ! $filter['soldout'] ? ' data-sortable="' . site_url('admin/menus/sort') . '"' : '' ?>>
     <?php foreach ($items as $i => $m): ?>
     <tr id="menu-<?= $m['id'] ?>" data-id="<?= $m['id'] ?>" class="<?= $m['is_visible'] ? '' : 'is-hidden-row' ?>">
@@ -52,7 +52,7 @@
         <strong><?= esc($m['name_ko']) ?></strong>
         <?= $m['is_signature'] ? '<span class="badge badge--dark">SIGNATURE</span>' : '' ?>
         <?= $m['is_best'] ? '<span class="badge">BEST</span>' : '' ?>
-        <div class="muted"><?= esc($m['name_en']) ?></div>
+        <?php if ($m['name_en'] !== ''): ?><div class="muted"><?= esc($m['name_en']) ?></div><?php endif ?>
       </td>
       <td>
         <form class="price-form" action="<?= site_url("admin/menus/{$m['id']}/quick") ?>" method="post">
@@ -65,13 +65,15 @@
       <td>
         <form class="inline" action="<?= site_url("admin/menus/{$m['id']}/quick") ?>" method="post">
           <?= csrf_field() ?><input type="hidden" name="field" value="is_sold_out">
-          <button class="btn btn--line btn--sm toggle<?= $m['is_sold_out'] ? ' is-on' : '' ?>" type="submit" aria-label="<?= esc($m['name_ko'], 'attr') ?> <?= $m['is_sold_out'] ? '판매 재개' : '품절 처리' ?>"><?= $m['is_sold_out'] ? '품절' : '판매중' ?></button>
+          <?php $on = ! $m['is_sold_out']; ?>
+          <button class="switch<?= $on ? ' is-on' : ' is-soldout' ?>" type="submit" role="switch" aria-checked="<?= $on ? 'true' : 'false' ?>" aria-label="<?= esc($m['name_ko'], 'attr') ?> 판매" title="<?= $on ? '누르면 품절로 바뀝니다' : '누르면 다시 판매 중으로 바뀝니다' ?>"><span class="switch-track" aria-hidden="true"></span><span class="switch-text"><?= $on ? '판매중' : '품절' ?></span></button>
         </form>
       </td>
       <td>
         <form class="inline" action="<?= site_url("admin/menus/{$m['id']}/quick") ?>" method="post">
           <?= csrf_field() ?><input type="hidden" name="field" value="is_visible">
-          <button class="btn btn--line btn--sm toggle" type="submit" aria-label="<?= esc($m['name_ko'], 'attr') ?> <?= $m['is_visible'] ? '숨기기' : '표시하기' ?>"><?= $m['is_visible'] ? '표시' : '숨김' ?></button>
+          <?php $on = (bool) $m['is_visible']; ?>
+          <button class="switch<?= $on ? ' is-on' : '' ?>" type="submit" role="switch" aria-checked="<?= $on ? 'true' : 'false' ?>" aria-label="<?= esc($m['name_ko'], 'attr') ?> 홈페이지에 보이기" title="<?= $on ? '누르면 홈페이지에서 숨깁니다' : '누르면 홈페이지에 다시 보입니다' ?>"><span class="switch-track" aria-hidden="true"></span><span class="switch-text"><span class="m-only">홈페이지 </span><?= $on ? '보임' : '숨김' ?></span></button>
         </form>
       </td>
       <td class="num">

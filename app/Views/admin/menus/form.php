@@ -25,8 +25,9 @@ $catSelected = (int) $v('category_id', $preset);
       <input type="text" id="name_ko" name="name_ko" maxlength="60" required value="<?= esc($v('name_ko'), 'attr') ?>" placeholder="예: 모로우 크림 라떼">
     </div>
     <div class="field">
-      <label for="name_en">영문 메뉴명<span class="req">*</span></label>
-      <input type="text" id="name_en" name="name_en" maxlength="60" required value="<?= esc($v('name_en'), 'attr') ?>" placeholder="예: Morrow Cream Latte">
+      <label for="name_en">영문 메뉴명 <span class="hint hint--inline">(선택)</span></label>
+      <input type="text" id="name_en" name="name_en" maxlength="60" value="<?= esc($v('name_en'), 'attr') ?>" placeholder="예: Morrow Cream Latte">
+      <span class="hint">비워두면 홈페이지에 한글 이름만 나옵니다.</span>
     </div>
     <div class="field full">
       <label for="description">설명</label>

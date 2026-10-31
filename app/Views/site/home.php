@@ -78,7 +78,7 @@ $links = map_links($s);
       <li class="sig-item">
         <figure><?= media_img($m, '(max-width: 560px) 100vw, (max-width: 860px) 50vw, 400px') ?></figure>
         <h3><?= esc($m['name_ko']) ?> <span><?= won($m['price']) ?></span></h3>
-        <p class="en"><?= esc($m['name_en']) ?></p>
+        <?php if ($m['name_en'] !== ''): ?><p class="en"><?= esc($m['name_en']) ?></p><?php endif ?>
         <?php if ($m['description']): ?><p class="desc"><?= esc($m['description']) ?></p><?php endif ?>
       </li>
       <?php endforeach ?>

@@ -134,7 +134,7 @@ class Menus extends AdminController
 
         $msg = match (true) {
             isset($data['is_sold_out']) => "'{$row['name_ko']}' " . ($data['is_sold_out'] ? '품절 처리했습니다.' : '판매 중으로 바꿨습니다.'),
-            isset($data['is_visible'])  => "'{$row['name_ko']}' " . ($data['is_visible'] ? '화면에 표시합니다.' : '화면에서 숨겼습니다.'),
+            isset($data['is_visible'])  => "'{$row['name_ko']}' " . ($data['is_visible'] ? '홈페이지에 다시 보입니다.' : '홈페이지에서 숨겼습니다.'),
             isset($data['price'])       => "'{$row['name_ko']}' 가격을 " . number_format($data['price']) . '원으로 바꿨습니다.',
             default                     => null,
         };

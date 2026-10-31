@@ -16,7 +16,7 @@ class MenuModel extends SortableModel
     protected $validationRules = [
         'category_id' => 'required|is_natural_no_zero|is_not_unique[menu_categories.id]',
         'name_ko'     => 'required|max_length[60]',
-        'name_en'     => 'required|max_length[60]',
+        'name_en'     => 'permit_empty|max_length[60]',
         'price'       => 'required|is_natural|less_than[1000000]',
         'description' => 'permit_empty|max_length[300]',
         'temperature' => 'required|in_list[none,hot,ice,both]',
@@ -25,7 +25,6 @@ class MenuModel extends SortableModel
     protected $validationMessages = [
         'category_id' => ['required' => '카테고리를 선택해 주세요.', 'is_not_unique' => '없는 카테고리입니다.'],
         'name_ko'     => ['required' => '한글 메뉴명을 입력해 주세요.'],
-        'name_en'     => ['required' => '영문 메뉴명을 입력해 주세요.'],
         'price'       => ['required' => '가격을 입력해 주세요.', 'is_natural' => '가격은 숫자만 입력해 주세요.', 'less_than' => '가격이 너무 큽니다.'],
     ];
 
