@@ -54,12 +54,12 @@ class Cafe extends BaseConfig
             'store_name'     => ['label' => '매장 이름', 'type' => 'text', 'required' => true],
             'store_name_en'  => ['label' => '영문 이름', 'type' => 'text'],
             'tagline'        => ['label' => '한 줄 소개 (푸터·검색 설명)', 'type' => 'text'],
-            'address'        => ['label' => '주소', 'type' => 'text', 'required' => true],
+            'address'        => ['label' => '주소', 'type' => 'text', 'required' => true, 'search' => true],
             'address_detail' => ['label' => '상세 주소', 'type' => 'text'],
             'address_note'   => ['label' => '찾아오는 길 안내', 'type' => 'textarea'],
             'phone'          => ['label' => '전화번호', 'type' => 'tel'],
-            'map_lat'        => ['label' => '지도 위도 (예: 37.5446)', 'type' => 'number'],
-            'map_lng'        => ['label' => '지도 경도 (예: 127.0559)', 'type' => 'number'],
+            'map_lat'        => ['label' => '지도 위치 · 위도', 'type' => 'number', 'placeholder' => '주소 검색으로 고르면 자동 입력'],
+            'map_lng'        => ['label' => '지도 위치 · 경도', 'type' => 'number', 'placeholder' => '주소 검색으로 고르면 자동 입력'],
             'regular_holiday'=> ['label' => '정기 휴무 안내 문구', 'type' => 'text'],
             'hours_note'     => ['label' => '영업시간 추가 안내', 'type' => 'text'],
         ],
@@ -94,6 +94,15 @@ class Cafe extends BaseConfig
                 'help' => '카카오맵 앱에서 매장 검색 → 매장 화면의 \'공유\' → \'링크 복사\' → 그대로 붙여넣기. 안내 글이 같이 복사돼도 주소만 골라 저장합니다.',
             ],
         ],
+    ];
+
+    /** 배너 버튼이 연결할 수 있는 홈페이지 화면. 값: [고르는 목록에 보일 이름, 버튼 글자를 비웠을 때 기본 글자] */
+    public array $linkPages = [
+        '/menu'     => ['MENU · 메뉴', '메뉴 보기'],
+        '/about'    => ['ABOUT · 카페 소개', '카페 소개 보기'],
+        '/space'    => ['SPACE · 매장 공간', '공간 둘러보기'],
+        '/news'     => ['NEWS · 공지·이벤트', '소식 보기'],
+        '/location' => ['LOCATION · 오시는 길', '오시는 길 보기'],
     ];
 
     /**

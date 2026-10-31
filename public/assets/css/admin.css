@@ -219,3 +219,16 @@ tr.is-ghost td { background: var(--sand); }
 .list td:first-child > .actions { flex-wrap: nowrap; gap: 4px; }
 .list .thumb { max-width: none; flex-shrink: 0; }
 .list--banner td:nth-child(3) { min-width: 200px; }
+
+/* 매장 정보: 주소 검색·지도 위치 확인 */
+.map-check { margin-top: 18px; }
+.map-check .label { font-weight: 600; font-size: .875rem; margin-bottom: 6px; }
+.map-box { height: 260px; border: 1px solid #D8CDBE; border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+.map-check [data-map-msg].is-ok { color: var(--ok); }
+.map-check [data-map-msg].is-err { color: var(--err); }
+.postcode-layer { position: fixed; inset: 0; z-index: 100; background: rgba(30, 20, 12, .5); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.postcode-layer > div { background: #fff; border-radius: 10px; width: 100%; max-width: 520px; overflow: hidden; display: flex; flex-direction: column; }
+.postcode-layer header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-weight: 600; border-bottom: 1px solid #EEE6DB; }
+.postcode-layer [data-postcode-box] { height: min(520px, 75vh); }
+.link-custom { margin-top: 8px; }
+[data-link-label][hidden], [data-link-custom][hidden] { display: none; }

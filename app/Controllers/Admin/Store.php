@@ -112,6 +112,7 @@ class Store extends AdminController
             'groups'   => $fields,
             'values'   => model(StoreSettingModel::class)->all(),
             'action'   => $action,
+            'kakaoKey' => (string) env('kakao.jsKey', ''),
         ]);
     }
 
@@ -193,8 +194,19 @@ class Store extends AdminController
             return $this->backWithErrors($errors);
         }
 
+        $before = model(StoreSettingModel::class)->all();
         model(StoreSettingModel::class)->saveMany($values);
 
-        return redirect()->to(site_url($back))->with('message', '저장했습니다.');
+        // 주소만 바꾸고 지도 위치는 그대로면 지도·길찾기가 예전 자리로 안내하게 된다
+        $redirect = redirect()->to(site_url($back))->with('message', '저장했습니다.');
+        if (isset($values['address'], $values['map_lat'])
+            && $values['address'] !== ($before['address'] ?? '')
+            && $values['map_lat'] !== ''
+            && $values['map_lat'] === ($before['map_lat'] ?? '')
+            && $values['map_lng'] === ($before['map_lng'] ?? '')) {
+            $redirect->with('notice', '주소는 바뀌었는데 지도 위치는 그대로입니다. 아래 지도에서 매장 위치가 맞는지 확인해 주세요. (주소 검색으로 고르면 자동으로 맞춰집니다)');
+        }
+
+        return $redirect;
     }
 }

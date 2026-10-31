@@ -21,14 +21,29 @@ $dt = static fn ($k) => old($k, ! empty($row[$k]) ? date('Y-m-d\TH:i', strtotime
       <label for="subtitle">설명</label>
       <input type="text" id="subtitle" name="subtitle" maxlength="200" value="<?= esc($v('subtitle'), 'attr') ?>">
     </div>
+    <?php
+    $pages  = config('Cafe')->linkPages;
+    $url    = $v('link_url');
+    $target = old('link_target', $url === '' ? '' : (isset($pages[$url]) ? $url : 'custom'));
+    ?>
     <div class="field">
+      <label for="link_target">버튼 누르면 갈 곳</label>
+      <select id="link_target" name="link_target" data-link-target>
+        <option value=""<?= $target === '' ? ' selected' : '' ?>>버튼 없음</option>
+        <?php foreach ($pages as $path => [$name]): ?>
+        <option value="<?= esc($path, 'attr') ?>"<?= $target === $path ? ' selected' : '' ?>><?= esc($name) ?></option>
+        <?php endforeach ?>
+        <option value="custom"<?= $target === 'custom' ? ' selected' : '' ?>>직접 입력 (특정 글·다른 사이트)</option>
+      </select>
+      <div class="link-custom" data-link-custom<?= $target === 'custom' ? '' : ' hidden' ?>>
+        <input type="text" id="link_url" name="link_url" maxlength="300" value="<?= esc($target === 'custom' ? $url : '', 'attr') ?>" inputmode="url" autocapitalize="off" spellcheck="false" placeholder="연결할 페이지 주소를 복사해서 붙여넣기" aria-label="직접 입력할 주소">
+        <span class="hint">홈페이지의 특정 공지 글이나 예약·주문 사이트처럼 목록에 없는 곳으로 보낼 때 씁니다.</span>
+      </div>
+    </div>
+    <div class="field" data-link-label<?= $target === '' ? ' hidden' : '' ?>>
       <label for="link_label">버튼 글자</label>
       <input type="text" id="link_label" name="link_label" maxlength="30" value="<?= esc($v('link_label'), 'attr') ?>" placeholder="예: 메뉴 보기">
-      <span class="hint">비워두면 버튼이 나오지 않습니다.</span>
-    </div>
-    <div class="field">
-      <label for="link_url">버튼 연결 주소</label>
-      <input type="text" id="link_url" name="link_url" maxlength="300" value="<?= esc($v('link_url'), 'attr') ?>" placeholder="/menu 또는 https://...">
+      <span class="hint">비워두면 '메뉴 보기'처럼 자동으로 넣습니다.</span>
     </div>
     <div class="field">
       <label for="starts_at">노출 시작</label>

@@ -205,3 +205,133 @@
     });
   });
 })();
+
+// 매장 정보: 주소 검색 → 위도·경도 자동 입력 → 지도에서 확인 (핀을 끌어 입구 위치로 조정)
+(function () {
+  var box = document.querySelector('[data-map-check]');
+  if (!box) return;
+  var key = box.getAttribute('data-kakao-key');
+  var addr = document.getElementById('address');
+  var detail = document.getElementById('address_detail');
+  var lat = document.getElementById('map_lat');
+  var lng = document.getElementById('map_lng');
+  var mapEl = box.querySelector('[data-map-box]');
+  var msg = box.querySelector('[data-map-msg]');
+  var map = null, marker = null, sdk = null;
+
+  function say(text, kind) {
+    msg.textContent = text;
+    msg.className = 'muted' + (kind ? ' is-' + kind : '');
+  }
+
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  function kakaoReady() {
+    if (!key) return Promise.reject();
+    if (!sdk) {
+      sdk = loadScript('https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + encodeURIComponent(key) + '&libraries=services&autoload=false')
+        .then(function () { return new Promise(function (r) { kakao.maps.load(r); }); });
+    }
+    return sdk;
+  }
+
+  function show(y, x) {
+    kakaoReady().then(function () {
+      var pos = new kakao.maps.LatLng(y, x);
+      mapEl.hidden = false;
+      if (!map) {
+        map = new kakao.maps.Map(mapEl, { center: pos, level: 3 });
+        marker = new kakao.maps.Marker({ position: pos, draggable: true, map: map });
+        kakao.maps.event.addListener(marker, 'dragend', function () {
+          var p = marker.getPosition();
+          lat.value = p.getLat().toFixed(7);
+          lng.value = p.getLng().toFixed(7);
+          say('핀 위치로 바꿨습니다. 저장을 눌러야 홈페이지에 반영됩니다.', 'ok');
+        });
+      } else {
+        map.relayout();
+        map.setCenter(pos);
+        marker.setPosition(pos);
+      }
+    }).catch(function () {});
+  }
+
+  function locate(address) {
+    if (!address) return;
+    kakaoReady().then(function () {
+      new kakao.maps.services.Geocoder().addressSearch(address, function (res, status) {
+        if (status !== kakao.maps.services.Status.OK || !res.length) {
+          say('이 주소로 지도 위치를 찾지 못했습니다. \'주소 검색\' 버튼으로 주소를 골라 주세요.', 'err');
+          return;
+        }
+        lat.value = parseFloat(res[0].y).toFixed(7);
+        lng.value = parseFloat(res[0].x).toFixed(7);
+        show(res[0].y, res[0].x);
+        say('지도 위치를 새 주소로 맞췄습니다. 핀이 입구와 조금 다르면 끌어서 옮기고, 저장을 눌러 주세요.', 'ok');
+      });
+    }).catch(function () {
+      say('지도를 불러오지 못해 위치를 자동으로 맞추지 못했습니다. 잠시 후 다시 시도해 주세요.', 'err');
+    });
+  }
+
+  // 처음 열었을 때: 저장된 위치를 지도로 보여 준다
+  if (key && lat.value && lng.value && !isNaN(lat.value) && !isNaN(lng.value)) {
+    show(lat.value, lng.value);
+    say('지금 홈페이지에 표시되는 매장 위치입니다. 핀이 입구와 다르면 끌어서 옮기고 저장하세요.');
+  }
+
+  // 주소를 직접 고쳐 쓴 경우에도 위치를 다시 찾는다
+  addr.addEventListener('change', function () { locate(addr.value.trim()); });
+
+  // 주소 검색 (우편번호 찾기 화면을 페이지 위에 띄움)
+  var btn = document.querySelector('[data-address-search]');
+  var postcode = null;
+  btn.addEventListener('click', function () {
+    postcode = postcode || loadScript('https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js');
+    postcode.then(function () {
+      var layer = document.createElement('div');
+      layer.className = 'postcode-layer';
+      layer.innerHTML = '<div role="dialog" aria-label="주소 검색"><header>주소 검색<button class="btn btn--line btn--sm" type="button">닫기</button></header><div data-postcode-box></div></div>';
+      document.body.appendChild(layer);
+      var close = function () { layer.remove(); };
+      layer.querySelector('header button').addEventListener('click', close);
+      layer.addEventListener('click', function (e) { if (e.target === layer) close(); });
+      new daum.Postcode({
+        width: '100%',
+        height: '100%',
+        oncomplete: function (d) {
+          var a = d.roadAddress || d.jibunAddress || d.address;
+          if (d.buildingName && d.apartment === 'Y') a += ' (' + d.buildingName + ')';
+          addr.value = a;
+          close();
+          locate(d.roadAddress || d.jibunAddress || d.address);
+          if (detail) detail.focus();
+        }
+      }).embed(layer.querySelector('[data-postcode-box]'));
+    }).catch(function () {
+      postcode = null;
+      say('주소 검색을 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 다시 눌러 주세요.', 'err');
+    });
+  });
+})();
+
+// 배너: 버튼 누르면 갈 곳 — '직접 입력'일 때만 주소 칸, '버튼 없음'이면 버튼 글자 칸 숨김
+(function () {
+  var sel = document.querySelector('[data-link-target]');
+  if (!sel) return;
+  var custom = document.querySelector('[data-link-custom]');
+  var label = document.querySelector('[data-link-label]');
+  sel.addEventListener('change', function () {
+    custom.hidden = sel.value !== 'custom';
+    label.hidden = sel.value === '';
+    if (!custom.hidden) custom.querySelector('input').focus();
+  });
+})();

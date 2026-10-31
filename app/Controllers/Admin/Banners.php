@@ -8,6 +8,7 @@ use App\Models\MediaModel;
 class Banners extends AdminController
 {
     private BannerModel $model;
+    private ?string $linkError = null;
 
     public function __construct()
     {
@@ -39,8 +40,8 @@ class Banners extends AdminController
     public function create()
     {
         $data = $this->input();
-        if (! $this->model->validate($data)) {
-            return $this->backWithErrors($this->model->errors());
+        if (! $this->model->validate($data) || $this->linkError) {
+            return $this->backWithErrors(array_filter([...array_values($this->model->errors()), $this->linkError]));
         }
 
         $mediaId = $this->uploadImage('image', $data['title']);
@@ -60,8 +61,8 @@ class Banners extends AdminController
     {
         $old  = $this->findOr404($this->model, $id);
         $data = $this->input();
-        if (! $this->model->validate($data)) {
-            return $this->backWithErrors($this->model->errors());
+        if (! $this->model->validate($data) || $this->linkError) {
+            return $this->backWithErrors(array_filter([...array_values($this->model->errors()), $this->linkError]));
         }
 
         $mediaId = $this->uploadImage('image', $data['title']);
@@ -103,11 +104,41 @@ class Banners extends AdminController
             'eyebrow'    => $p('eyebrow'),
             'title'      => $p('title'),
             'subtitle'   => $p('subtitle'),
-            'link_label' => $p('link_label'),
-            'link_url'   => $p('link_url'),
+            ...$this->link($p('link_target'), $p('link_url'), $p('link_label')),
             'is_active'  => $this->flag('is_active'),
             'starts_at'  => $this->dt($p('starts_at')),
             'ends_at'    => $this->dt($p('ends_at')),
         ];
+    }
+
+    /**
+     * 버튼 연결: 목록에서 고른 화면, 또는 '직접 입력'한 주소.
+     * 직접 입력은 /news/3 같은 사이트 안 주소나 https:// 주소만 받는다 (그 외는 버튼이 조용히 사라지므로 미리 알림)
+     */
+    private function link(string $target, string $url, string $label): array
+    {
+        $pages = config('Cafe')->linkPages;
+
+        if ($target === '') {
+            return ['link_label' => '', 'link_url' => ''];
+        }
+        if (isset($pages[$target])) {
+            return ['link_label' => $label ?: $pages[$target][1], 'link_url' => $target];
+        }
+
+        if ($url !== '' && ! str_starts_with($url, '/') && ! preg_match('#^https?://#i', $url)) {
+            $url = preg_match('#^[a-z0-9-]+(\.[a-z0-9-]+)+([/?\#]\S*)?$#i', $url) ? 'https://' . $url : '';
+            if ($url === '') {
+                $this->linkError = '버튼 연결 주소: 인터넷 주소 형식이 아닙니다. 홈페이지 화면으로 연결하려면 목록에서 골라 주세요.';
+            }
+        }
+        if ($url === '' && ! $this->linkError) {
+            $this->linkError = '버튼 연결 주소를 입력해 주세요.';
+        }
+        if ($label === '') {
+            $this->linkError ??= '버튼 글자를 입력해 주세요.';
+        }
+
+        return ['link_label' => $label, 'link_url' => $url];
     }
 }

@@ -17,12 +17,16 @@
         <textarea id="<?= $key ?>" name="<?= $key ?>" rows="3"><?= esc($val) ?></textarea>
         <?php else: ?>
         <?php $saved = $f['type'] === 'url' ? safe_url($values[$key] ?? '') : ''; ?>
-        <?php if ($f['type'] === 'url'): ?><div class="link-row"><?php endif ?>
+        <?php $row = $f['type'] === 'url' || ! empty($f['search']); ?>
+        <?php if ($row): ?><div class="link-row"><?php endif ?>
         <input type="<?= $type ?>" id="<?= $key ?>" name="<?= $key ?>" value="<?= esc($val, 'attr') ?>"<?= $f['type'] === 'number' ? ' inputmode="decimal"' : '' ?><?= $f['type'] === 'url' ? ' inputmode="url" autocapitalize="off" spellcheck="false"' : '' ?><?= ! empty($f['placeholder']) ? ' placeholder="' . esc($f['placeholder'], 'attr') . '"' : '' ?><?= ! empty($f['required']) ? ' required' : '' ?>>
         <?php if ($saved !== ''): ?>
         <a class="btn btn--line btn--sm" href="<?= esc($saved, 'attr') ?>" target="_blank" rel="noopener noreferrer" title="저장된 주소를 새 창으로 열어 봅니다">열어보기</a>
         <?php endif ?>
-        <?php if ($f['type'] === 'url'): ?></div><?php endif ?>
+        <?php if (! empty($f['search'])): ?>
+        <button class="btn btn--line btn--sm" type="button" data-address-search>주소 검색</button>
+        <?php endif ?>
+        <?php if ($row): ?></div><?php endif ?>
         <?php endif ?>
         <?php if (! empty($f['help'])): ?>
         <span class="hint"><?= esc($f['help']) ?></span>
@@ -34,7 +38,11 @@
       <?php endforeach ?>
     </div>
     <?php if ($g === 'store'): ?>
-    <p class="muted note-top">위도·경도는 카카오맵에서 매장을 검색 → 우클릭 '이 위치의 좌표'로 확인할 수 있습니다. 비워두면 지도 대신 주소만 표시됩니다.</p>
+    <div class="map-check" data-map-check data-kakao-key="<?= esc($kakaoKey, 'attr') ?>">
+      <p class="label">지도 위치 확인</p>
+      <div class="map-box" data-map-box hidden></div>
+      <p class="muted" data-map-msg>'주소 검색'으로 주소를 고르면 위도·경도가 자동으로 채워지고 여기 지도에 표시됩니다. 비워두면 홈페이지에 지도 대신 주소만 나옵니다.</p>
+    </div>
     <?php endif ?>
     <?php if ($g === 'sns'): ?>
     <p class="muted note-top">비워둔 인스타그램·카카오톡 채널은 홈페이지에 버튼이 나오지 않습니다.<br>
