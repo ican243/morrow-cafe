@@ -11,6 +11,7 @@ class Location extends SiteController
         return $this->render('location', [
             'title'     => 'Location',
             'navActive' => 'location',
+            'description' => '{매장} 오시는 길 — {주소}. 지도, 길찾기, 영업시간과 휴무 안내.',
             'closures'  => model(StoreClosureModel::class)->upcoming(),
             'kakaoKey'  => (string) env('kakao.jsKey', ''),
         ]);

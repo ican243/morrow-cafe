@@ -22,6 +22,7 @@ class News extends SiteController
         return $this->render('news', [
             'title'     => 'News',
             'navActive' => 'news',
+            'description' => '{매장}의 공지사항과 이벤트 소식.',
             'posts'     => $posts,
             'pager'     => $model->pager,
             'type'      => $type,

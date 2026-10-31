@@ -3,12 +3,13 @@
 
 <div class="wrap">
   <article class="article">
-    <div class="news-meta"><span class="type"><?= $types[$post['type']] ?></span></div>
+    <?php $ev = event_state($post) ?>
+    <div class="news-meta"><span class="type"><?= $types[$post['type']] ?></span><?php if ($ev): ?><span class="state state--<?= $ev['key'] ?>"><?= $ev['text'] ?></span><?php endif ?></div>
     <h1><?= esc($post['title']) ?></h1>
     <div class="article-meta">
       <span>작성일 <time datetime="<?= esc($post['published_at'], 'attr') ?>"><?= ko_date($post['published_at']) ?></time></span>
       <?php if ($post['type'] === 'event' && $post['event_start']): ?>
-      <span>이벤트 기간 <?= ko_date($post['event_start']) ?><?= $post['event_end'] ? ' – ' . ko_date($post['event_end']) : '' ?></span>
+      <span>이벤트 기간 <?= ko_date($post['event_start']) ?><?= $post['event_end'] ? ' – ' . ko_date($post['event_end']) : '' ?><?= $ev && $ev['key'] === 'end' ? ' (종료된 이벤트입니다)' : '' ?></span>
       <?php endif ?>
     </div>
     <?php if ($post['media_path']): ?><figure><?= media_img($post, '(max-width: 800px) 100vw, 760px', ['loading' => 'eager']) ?></figure><?php endif ?>

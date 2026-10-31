@@ -222,3 +222,26 @@ if (! function_exists('today_status')) {
         return ['open' => true, 'text' => '지금 영업 중 · ' . hm($row['close_time']) . '까지'];
     }
 }
+
+if (! function_exists('event_state')) {
+    /**
+     * 이벤트 글의 진행 상태. 이벤트가 아니거나 기간이 없으면 null.
+     * @return array{key: string, text: string}|null  key: on(진행 중) / soon(예정) / end(종료)
+     */
+    function event_state(array $post, ?int $now = null): ?array
+    {
+        if (($post['type'] ?? '') !== 'event' || (empty($post['event_start']) && empty($post['event_end']))) {
+            return null;
+        }
+        $today = date('Y-m-d', $now ?? time());
+
+        if (! empty($post['event_end']) && $today > $post['event_end']) {
+            return ['key' => 'end', 'text' => '종료'];
+        }
+        if (! empty($post['event_start']) && $today < $post['event_start']) {
+            return ['key' => 'soon', 'text' => date('n.j', strtotime($post['event_start'])) . ' 시작'];
+        }
+
+        return ['key' => 'on', 'text' => '진행 중'];
+    }
+}

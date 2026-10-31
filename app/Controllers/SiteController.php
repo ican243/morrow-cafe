@@ -20,6 +20,11 @@ abstract class SiteController extends BaseController
             'description' => $settings['tagline'] ?? '',
             'navActive'   => '',
         ];
+        // 화면별 설명 문구의 {매장}·{주소} 자리에 관리자에서 넣은 값을 채운다
+        $data['description'] = strtr($data['description'], [
+            '{매장}' => $settings['store_name'] ?? '',
+            '{주소}' => trim(($settings['address'] ?? '') . ' ' . ($settings['address_detail'] ?? '')),
+        ]);
         $data['s']     = $settings;
         $data['week']  ??= model(BusinessHourModel::class)->week();
         $data['today'] = (int) date('w');

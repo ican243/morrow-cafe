@@ -18,6 +18,7 @@ class Menu extends SiteController
         return $this->render('menu', [
             'title'      => 'Menu',
             'navActive'  => 'menu',
+            'description' => '{매장} 메뉴와 가격 — ' . implode(', ', array_column($categories, 'name_ko')) . '.',
             'categories' => $categories,
             'menus'      => $menus,
             'allergens'  => config(\Config\Cafe::class)->allergens,
