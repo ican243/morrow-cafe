@@ -67,6 +67,24 @@ abstract class AdminController extends BaseController
         ]);
     }
 
+    /**
+     * 사진은 그대로 두고 '사진 설명'만 고친 경우 → 지금 사진의 설명을 바로 바꾼다.
+     * 사진 보관함의 설명과 같은 값이라, 같은 사진을 쓰는 다른 곳에도 함께 반영된다. 비워 두면 그대로 둔다.
+     */
+    protected function saveCurrentAlt(int|string|null $mediaId): void
+    {
+        $alt = mb_substr(trim((string) $this->request->getPost('image_alt')), 0, 200);
+        if (! $mediaId || $alt === '') {
+            return;
+        }
+
+        $media = model(MediaModel::class);
+        $row   = $media->find((int) $mediaId);
+        if ($row && $row['alt_text'] !== $alt) {
+            $media->update((int) $mediaId, ['alt_text' => $alt]);
+        }
+    }
+
     /** 입력값 되돌려주며 이전 화면으로 */
     protected function backWithErrors(array|string $errors)
     {

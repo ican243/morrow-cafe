@@ -6,21 +6,22 @@
   <?= csrf_field() ?>
   <h2>요일별 영업시간</h2>
   <table class="list hours-edit">
-    <thead><tr><th>요일</th><th>휴무</th><th>여는 시간</th><th>닫는 시간</th><th>라스트 오더</th><th>브레이크 시작</th><th>브레이크 끝</th></tr></thead>
+    <thead><tr><th>요일</th><th>휴무</th><th>여는 시간</th><th>닫는 시간</th><th>라스트 오더</th><th>브레이크 시작</th><th>브레이크 끝</th><th></th></tr></thead>
     <tbody>
     <?php foreach ($week as $d => $row):
         $val = static fn ($k) => $old[$d][$k] ?? hm($row[$k] ?? null); ?>
-    <tr>
+    <tr data-day="<?= $row['name'] ?>">
       <th scope="row"><?= $row['name'] ?></th>
       <td><input type="checkbox" name="days[<?= $d ?>][is_closed]" value="1" data-closed aria-label="<?= $row['name'] ?>요일 휴무"<?= ($old[$d]['is_closed'] ?? $row['is_closed']) ? ' checked' : '' ?>></td>
       <?php foreach (['open_time' => '여는 시간', 'close_time' => '닫는 시간', 'last_order' => '라스트 오더', 'break_start' => '브레이크 시작', 'break_end' => '브레이크 끝'] as $k => $label): ?>
       <td><input type="time" name="days[<?= $d ?>][<?= $k ?>]" value="<?= esc($val($k), 'attr') ?>" aria-label="<?= $row['name'] ?>요일 <?= $label ?>"></td>
       <?php endforeach ?>
+      <td><button class="btn btn--line btn--sm" type="button" data-copy-hours title="이 줄의 시간을 휴무가 아닌 다른 요일에 똑같이 넣습니다"><?= $row['name'] ?> 시간 → 모든 요일</button></td>
     </tr>
     <?php endforeach ?>
     </tbody>
   </table>
-  <div class="form-foot"><span class="muted">라스트 오더·브레이크타임은 없으면 비워두세요.</span><button class="btn" type="submit">영업시간 저장</button></div>
+  <div class="form-foot"><span class="muted" data-hours-msg>한 요일을 입력하고 '모든 요일'을 누르면 휴무가 아닌 요일에 똑같이 들어갑니다. 라스트 오더·브레이크타임은 없으면 비워두세요.</span><button class="btn" type="submit">영업시간 저장</button></div>
 </form>
 
 <section class="card">

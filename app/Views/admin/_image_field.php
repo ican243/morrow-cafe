@@ -40,7 +40,7 @@ $ratioText = match (true) {
       <div class="field alt-field">
         <label for="image_alt">사진 설명 <span class="hint hint--inline">(시각장애인용 화면 낭독·검색에 쓰임)</span></label>
         <input type="text" id="image_alt" name="image_alt" maxlength="200" placeholder="예: 우드 테이블 위 라떼 한 잔" value="<?= esc(old('image_alt', $row['media_alt'] ?? ''), 'attr') ?>">
-        <span class="hint">새 사진을 올릴 때 적용됩니다. 기존 사진 설명은 '사진 보관함'에서 고칠 수 있습니다.</span>
+        <span class="hint"><?= empty($row['media_path']) ? '사진과 함께 저장됩니다.' : '여기서 고치고 저장하면 지금 사진의 설명이 바로 바뀝니다. (사진 보관함에도 같이 반영)' ?></span>
       </div>
       <?php if ($removable && ! empty($row['media_path'])): ?>
       <label class="check"><input type="checkbox" name="remove_image" value="1"> 사진 빼기</label>

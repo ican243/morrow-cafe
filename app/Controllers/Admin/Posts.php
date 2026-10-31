@@ -86,6 +86,9 @@ class Posts extends AdminController
 
         $data['published_at'] = $this->dt($data['published_at']);
         $this->model->skipValidation()->update($id, $data);
+        if (! array_key_exists('media_id', $data)) {
+            $this->saveCurrentAlt($old['media_id']);
+        }
 
         if (array_key_exists('media_id', $data) && $old['media_id']) {
             model(MediaModel::class)->removeIfOrphan((int) $old['media_id']);

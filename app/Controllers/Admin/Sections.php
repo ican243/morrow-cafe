@@ -63,6 +63,9 @@ class Sections extends AdminController
             if ($mediaId && $row['media_id']) {
                 model(MediaModel::class)->removeIfOrphan((int) $row['media_id']);
             }
+            if (! $mediaId) {
+                $this->saveCurrentAlt($row['media_id']);
+            }
         } else {
             $model->skipValidation()->insert($data);
         }

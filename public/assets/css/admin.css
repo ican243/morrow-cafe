@@ -169,6 +169,9 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--sand); bord
 .hours-edit td { padding: 8px 6px; }
 .hours-edit input[type=time] { min-width: 110px; }
 .hours-edit tr.is-closed input[type=time] { opacity: .35; }
+.hours-edit [data-copy-hours] { white-space: nowrap; }
+.hours-edit tr.is-closed [data-copy-hours] { visibility: hidden; }
+[data-hours-msg].is-ok { color: var(--ok); }
 
 /* 로그인 */
 .login-page { min-height: 100vh; display: grid; place-items: center; padding: 20px; background: var(--cream); }

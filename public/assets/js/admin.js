@@ -344,3 +344,24 @@
     document.querySelectorAll('[data-event-only]').forEach(function (el) { el.hidden = type.value !== 'event'; });
   });
 })();
+
+// 영업시간: 한 요일 시간을 휴무가 아닌 다른 요일에 똑같이 넣기
+(function () {
+  var msg = document.querySelector('[data-hours-msg]');
+  document.querySelectorAll('[data-copy-hours]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var from = btn.closest('tr');
+      var src = from.querySelectorAll('input[type=time]');
+      var days = [];
+      from.parentNode.querySelectorAll('tr').forEach(function (tr) {
+        if (tr === from || tr.querySelector('[data-closed]').checked) return;
+        tr.querySelectorAll('input[type=time]').forEach(function (input, i) { input.value = src[i].value; });
+        days.push(tr.getAttribute('data-day'));
+      });
+      msg.textContent = days.length
+        ? from.getAttribute('data-day') + '요일 시간을 ' + days.join('·') + '요일에 넣었습니다. \'영업시간 저장\'을 눌러야 반영됩니다.'
+        : '휴무가 아닌 다른 요일이 없습니다.';
+      msg.classList.add('is-ok');
+    });
+  });
+})();

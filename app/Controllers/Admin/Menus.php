@@ -102,6 +102,9 @@ class Menus extends AdminController
         }
 
         $this->model->update($id, $data);
+        if (! array_key_exists('media_id', $data)) {
+            $this->saveCurrentAlt($old['media_id']);
+        }
 
         // 사진을 바꿨거나 뺐으면, 아무 데서도 안 쓰게 된 예전 사진 파일 정리
         if (array_key_exists('media_id', $data) && $old['media_id'] && (int) $old['media_id'] !== (int) $data['media_id']) {

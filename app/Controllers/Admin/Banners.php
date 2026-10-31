@@ -74,6 +74,9 @@ class Banners extends AdminController
         }
 
         $this->model->update($id, $data);
+        if (! array_key_exists('media_id', $data)) {
+            $this->saveCurrentAlt($old['media_id']);
+        }
         if ($mediaId) {
             model(MediaModel::class)->removeIfOrphan((int) $old['media_id']);
         }
