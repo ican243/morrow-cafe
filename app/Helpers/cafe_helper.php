@@ -164,15 +164,61 @@ if (! function_exists('map_links')) {
 }
 
 if (! function_exists('today_status')) {
-    /** HOME 소개 옆 "오늘 영업" 표시용 */
-    function today_status(array $week, array $closures = []): array
+    /**
+     * HOME 소개 옆 영업 상태. 지금 시각·브레이크타임·임시 휴무일까지 보고 한 줄로 알려 준다.
+     *  지금 영업 중 · 20:00까지 / 브레이크타임 · 17:00에 다시 열어요 / 오픈 전 · 오늘 08:30에 열어요
+     *  영업 종료 · 내일 08:30에 열어요 / 오늘은 쉬어갑니다 (원두 입고) · 수요일 08:30에 열어요
+     *
+     * @param array    $closures store_closures 행들 (closed_on, reason)
+     * @param int|null $now      테스트용 시각 (없으면 지금)
+     */
+    function today_status(array $week, array $closures = [], ?int $now = null): array
     {
-        $d   = (int) date('w');
-        $row = $week[$d] ?? null;
-        if (! $row || $row['is_closed'] || in_array(date('Y-m-d'), $closures, true)) {
-            return ['open' => false, 'text' => '오늘은 쉬어갑니다'];
+        $now ??= time();
+        $off   = array_column($closures, 'reason', 'closed_on');
+        $today = date('Y-m-d', $now);
+        $row   = $week[(int) date('w', $now)] ?? null;
+        $at    = static fn (?string $t) => $t ? strtotime($today . ' ' . $t) : null;
+
+        // 다음에 문 여는 날 (2주 안에서 찾기)
+        $next = static function (int $fromDay) use ($week, $off, $now): string {
+            for ($i = $fromDay; $i <= 14; $i++) {
+                $ts  = strtotime("+{$i} day", strtotime(date('Y-m-d', $now)));
+                $day = $week[(int) date('w', $ts)] ?? null;
+                if ($day && ! $day['is_closed'] && $day['open_time'] && ! isset($off[date('Y-m-d', $ts)])) {
+                    $when = $i === 1 ? '내일' : ($i < 7 ? $day['name'] . '요일' : date('n.j', $ts) . ' (' . $day['name'] . ')');
+
+                    return " · {$when} " . hm($day['open_time']) . '에 열어요';
+                }
+            }
+
+            return '';
+        };
+
+        if (isset($off[$today]) || ! $row || $row['is_closed'] || ! $row['open_time']) {
+            $why = ! empty($off[$today]) ? ' (' . $off[$today] . ')' : '';
+
+            return ['open' => false, 'text' => '오늘은 쉬어갑니다' . $why . $next(1)];
         }
 
-        return ['open' => true, 'text' => '오늘 ' . hm($row['open_time']) . ' – ' . hm($row['close_time']) . ' 영업'];
+        $open  = $at($row['open_time']);
+        $close = $at($row['close_time']);
+        if ($close <= $open) {
+            $close += 86400; // 새벽까지 영업하는 경우
+        }
+        $breakStart = $at($row['break_start'] ?? null);
+        $breakEnd   = $at($row['break_end'] ?? null);
+
+        if ($now < $open) {
+            return ['open' => false, 'text' => '오픈 전 · 오늘 ' . hm($row['open_time']) . '에 열어요'];
+        }
+        if ($now >= $close) {
+            return ['open' => false, 'text' => '오늘 영업 종료' . $next(1)];
+        }
+        if ($breakStart && $breakEnd && $now >= $breakStart && $now < $breakEnd) {
+            return ['open' => false, 'text' => '브레이크타임 · ' . hm($row['break_end']) . '에 다시 열어요'];
+        }
+
+        return ['open' => true, 'text' => '지금 영업 중 · ' . hm($row['close_time']) . '까지'];
     }
 }

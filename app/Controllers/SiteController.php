@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\BannerModel;
 use App\Models\BusinessHourModel;
 use App\Models\StoreSettingModel;
 
@@ -22,6 +23,12 @@ abstract class SiteController extends BaseController
         $data['s']     = $settings;
         $data['week']  ??= model(BusinessHourModel::class)->week();
         $data['today'] = (int) date('w');
+
+        // 카톡·인스타 등에 링크를 보낼 때 미리보기 사진: 따로 정한 게 없으면 지금 걸린 메인 배너 첫 장
+        if (empty($data['ogImage'])) {
+            $banner          = model(BannerModel::class)->current()[0] ?? null;
+            $data['ogImage'] = $banner ? media_url($banner['media_path'], 'lg') : '';
+        }
 
         return view('site/' . $view, $data);
     }

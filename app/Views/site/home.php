@@ -56,7 +56,7 @@ $links = map_links($s);
     </div>
     <div class="intro-body">
       <?= paragraphs($intro['body']) ?>
-      <?php $st = today_status($week) ?>
+      <?php $st = today_status($week, $closures) ?>
       <p class="today<?= $st['open'] ? '' : ' is-closed' ?>"><i aria-hidden="true"></i><?= esc($st['text']) ?></p>
     </div>
   </div>
@@ -133,7 +133,7 @@ $links = map_links($s);
         <?php if (! empty($s['phone'])): ?><a class="btn btn--line" href="<?= tel_href($s['phone']) ?>"><?= icon('phone') ?> 전화</a><?php endif ?>
       </div>
     </div>
-    <div><?= $this->include('partials/hours_table') ?></div>
+    <div><?= $this->include('partials/hours_table') ?><?= $this->include('partials/closures') ?></div>
   </div>
 </section>
 

@@ -7,6 +7,7 @@ use App\Models\GalleryImageModel;
 use App\Models\MenuModel;
 use App\Models\PageSectionModel;
 use App\Models\PostModel;
+use App\Models\StoreClosureModel;
 
 class Home extends SiteController
 {
@@ -19,6 +20,7 @@ class Home extends SiteController
             'signature' => model(MenuModel::class)->signatures(3),
             'space'     => model(GalleryImageModel::class)->visible(true, 5),
             'latest'    => model(PostModel::class)->published()->orderBy('published_at', 'DESC')->findAll(1)[0] ?? null,
+            'closures'  => model(StoreClosureModel::class)->upcoming(),
         ]);
     }
 }

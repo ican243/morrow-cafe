@@ -18,6 +18,9 @@ $pageTitle = $title ? $title . ' | ' . $storeName : $storeName . ' — ' . ($s['
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#F5F0E8">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="<?= esc($s['store_name'] ?? '', 'attr') ?>">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:url" content="<?= esc(current_url(), 'attr') ?>">
 <meta property="og:title" content="<?= esc($pageTitle, 'attr') ?>">
 <meta property="og:description" content="<?= esc($description ?? '', 'attr') ?>">
 <?php if (! empty($ogImage)): ?><meta property="og:image" content="<?= esc($ogImage, 'attr') ?>"><?php endif ?>
